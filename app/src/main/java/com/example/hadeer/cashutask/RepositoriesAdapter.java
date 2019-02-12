@@ -10,12 +10,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class repositoriesAdapter extends ArrayAdapter<OneRepositoryModel> {
-    public repositoriesAdapter(@NonNull Context context) {
-        super(context, 0);
-    }
+public class RepositoriesAdapter extends ArrayAdapter<OneRepositoryModel> {
 
-    public repositoriesAdapter(Context context, List<OneRepositoryModel> repositories) {
+    public RepositoriesAdapter(Context context, List<OneRepositoryModel> repositories) {
         super(context, 0, repositories);
     }
 
@@ -28,11 +25,11 @@ public class repositoriesAdapter extends ArrayAdapter<OneRepositoryModel> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_repositories, parent, false);
         }
-        TextView name_tv = convertView.findViewById(R.id.name_row_id);
-        TextView description_tv =  convertView.findViewById(R.id.des_row_id);
+        TextView name_textview = convertView.findViewById(R.id.name_row_id);
+        TextView description_textview =  convertView.findViewById(R.id.des_row_id);
 
-        name_tv.setText(repository.getName());
-        description_tv.setText(repository.getDescription());
+        name_textview.setText(repository.getName());
+        description_textview.setText(repository.getDescription());
 
         return convertView;
     }

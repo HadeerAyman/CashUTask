@@ -19,22 +19,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RemoteRequest {
 
-    SqliteOperations sqliteOperations = new SqliteOperations();
     public static boolean requestInBG = true;
+    private String BASE_URL = "https://api.github.com/users/JakeWharton/";
+    private String ACCESS_TOKEN = "650624d31ffb78f9c3f52cb4e91219ab13eb5626";
 
-    public void requestRepositories(final Context context, final ListView listView_repositories,
-                                    int page, final ProgressBar progressBar){
+    public void requestRepositories(final Context context, int page, final ProgressBar progressBar,
+                                    final SqliteOperations sqliteOperations){
         progressBar.setVisibility(View.VISIBLE);
+//        final SqliteOperations sqliteOperations = new SqliteOperations(context);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.github.com/users/JakeWharton/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         RepositoriesRequestInterface retrofitInterface = retrofit.create(RepositoriesRequestInterface.class);
 
         Call<List<OneRepositoryModel>> connection = retrofitInterface.getRepositories(page,
-                15, "650624d31ffb78f9c3f52cb4e91219ab13eb5626");
+                15, ACCESS_TOKEN);
 
         connection.enqueue(new Callback<List<OneRepositoryModel>>() {
             @Override
@@ -43,18 +45,15 @@ public class RemoteRequest {
                 Log.d("TTTT", response.headers().get("Link"));
                 if (response.headers().get("Link") != null) {
                     if (response.headers().get("Link").contains("next")) {
-                        MainActivity.offset = 1;
+                        DataHandler.get_instance(context).offset = 1;
 
                     } else {
-                        MainActivity.offset = 0;
+                        DataHandler.get_instance(context).offset = 0;
                     }
                 }
-
                 List<OneRepositoryModel> repositories = response.body();
-                MainActivity.repositories.addAll(repositories);
-                MainActivity.adapt.notifyDataSetChanged();
-                sqliteOperations.insertReposerories(context, repositories);
-
+                DataHandler.get_instance(context).add_all(repositories);
+                sqliteOperations.insertReposerories(repositories);
             }
 
             @Override
